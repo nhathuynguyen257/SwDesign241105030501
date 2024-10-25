@@ -1,88 +1,52 @@
 1. phân tích kiến trúc của bài toán Payroll System:
-- Người dùng hệ thống:
-  + Nhân viên :
-    * Ghi nhận bảng chấm công (dành cho nhân viên hưởng lương theo giờ và nhân viên hưởng lương cố định).
-    * Nhập đơn đặt hàng (cho nhân viên hưởng hoa hồng).
-    * Thay đổi phương thức thanh toán (chuyển khoản, gửi qua bưu điện, hoặc nhận trực tiếp).
-    * Xem báo cáo: tổng số giờ làm việc, tiền lương đã nhận, thời gian nghỉ còn lại, giờ làm việc theo dự án.
-- Yêu cầu chức năng:
-  + Quản lý thời gian làm việc:
-    * Đối với nhân viên làm thêm giờ (>8 giờ), cần tính lương với mức tăng 1.5 lần so với lương cơ bản.
-    * Nhân viên cần ghi nhận thời gian làm việc (bảng chấm công) cho các dự án mà họ tham gia. Bảng chấm công này phải ghi rõ mã số dự án (charge number), số giờ làm việc mỗi ngày.
-  + Quản lý đơn đặt hàng:
-    * Nhân viên hưởng hoa hồng cần ghi nhận đơn đặt hàng với các thông tin: ngày tháng, giá trị bán hàng.
-  + Tính lương:
-    * Nhân viên theo giờ: Tính lương theo số giờ làm việc và số giờ làm thêm.
-    * Nhân viên hưởng lương cố định: Lương cố định được trả vào ngày làm việc cuối cùng của tháng.
-    * Nhân viên hưởng hoa hồng: Ngoài lương cố định, họ còn nhận thêm hoa hồng dựa trên doanh số bán hàng.
-  + Tích hợp với cơ sở dữ liệu dự án (DB2):
-    * Hệ thống cần truy cập (chỉ đọc) vào cơ sở dữ liệu DB2 để lấy thông tin mã số dự án (charge number) phục vụ cho việc ghi nhận bảng chấm công.
-  - Yêu cầu phi chức năng:
-    + Hệ thống phải đảm bảo tính bảo mật thông tin, chỉ cho phép nhân viên truy cập vào dữ liệu cá nhân của họ (bảng chấm công, đơn đặt hàng). Quản trị viên có quyền truy cập vào dữ liệu của tất cả nhân viên.
-    + Hệ thống phải có khả năng mở rộng để hỗ trợ thêm nhiều nhân viên hơn (hiện tại Acme có khoảng 5,000 nhân viên trên toàn cầu).
-    + Hệ thống cần tự động hóa quá trình tính lương, tránh sự can thiệp thủ công trong các hoạt động hàng ngày.
-
-  - Đề xuất kiến trúc nhiều lớp (multi-tier),Kiến trúc này sẽ chia hệ thống thành ba lớp chính:
-  a.Lớp trình bày (Client)
-    * Ứng dụng Desktop dựa trên Windows: Đây sẽ là giao diện người dùng cho nhân viên và quản trị viên,Nó sẽ cho phép người dùng:
-      * Nhập bảng chấm công hoặc đơn đặt hàng.
-      * Thay đổi phương thức thanh toán.
-      * Xem báo cáo (giờ làm việc, tiền lương đã nhận, v.v.).
-      Lý do lựa chọn: Ứng dụng desktop phù hợp để đảm bảo giao diện phản hồi nhanh và tích hợp dễ dàng với hạ tầng Windows sẵn có. Nó đảm bảo tính bảo mật vì người dùng có thể truy cập dữ liệu trên máy tính của họ với các cơ chế xác thực phù hợp.
-  b. Lớp logic nghiệp vụ (Service Layer)
-    * Dịch vụ tính lương: Dịch vụ này sẽ xử lý các quy tắc nghiệp vụ và tính toán lương.
-    * Xử lý bảng chấm công và đơn đặt hàng: Dịch vụ xử lý các bảng chấm công và đơn đặt hàng, đảm bảo ghi nhận đúng mã số dự án và dữ liệu bán hàng.
-    * Quản lý nhân viên: Dịch vụ quản lý việc thêm, xóa và cập nhật thông tin nhân viên.
-    * Lớp bảo mật: Xác thực và phân quyền để đảm bảo rằng nhân viên chỉ có thể truy cập vào dữ liệu của họ.
-    Lý do lựa chọn: Việc tách logic nghiệp vụ ra khỏi giao diện người dùng giúp hệ thống dễ bảo trì, mở rộng và đảm bảo tính bảo mật. Các quy tắc nghiệp vụ như tính lương có thể thay đổi mà không ảnh hưởng đến giao diện.
-  c. Lớp dữ liệu (Database và Integration Layer)
-    * Tích hợp DB2: Vì Acme sử dụng cơ sở dữ liệu DB2 cho quản lý dự án, hệ thống sẽ bao gồm một kết nối DB2 để đọc mã số dự án. Điều này sẽ chỉ cho phép đọc để đảm bảo tính toàn vẹn của hệ thống cũ.
-    * Cơ sở dữ liệu Payroll: Một cơ sở dữ liệu riêng (như SQL Server hoặc MySQL) để lưu trữ dữ liệu nhân viên, bảng chấm công, đơn đặt hàng, phương thức thanh toán và báo cáo.
-    Lý do lựa chọn: Kết nối DB2 đảm bảo tương thích với hệ thống quản lý dự án cũ. Việc sử dụng cơ sở dữ liệu riêng cho trả lương đảm bảo hệ thống độc lập, dễ mở rộng và phù hợp với các yêu cầu xử lý trả lương.
-  d. Hệ thống xử lý hàng loạt
-    * Tự động tạo bảng lương: Một công việc hoặc dịch vụ định kỳ
-    Lý do lựa chọn: Điều này đảm bảo việc trả lương diễn ra đều đặn và đáng tin cậy mà không cần can thiệp thủ công, tăng hiệu quả hoạt động.
-
+  - Đề xuất kiến trúc ba tầng
+  - Giải thích:
+    * Cách tiếp cận Hướng Dịch vụ (SOA):
+      * Bằng cách chia nhỏ hệ thống thành nhiều dịch vụ độc lập (như Payroll Service, Employee Service, Reporting Service), hệ thống trở nên dễ bảo trì và mở rộng. Các dịch vụ có thể nâng cấp hoặc thay đổi độc lập mà không ảnh hưởng đến toàn hệ thống.
+      * Kiến trúc SOA giúp dễ dàng triển khai các tính năng mới, chẳng hạn như bổ sung các phương thức thanh toán mới hoặc thay đổi quy tắc tính lương mà không ảnh hưởng đến các thành phần khác của hệ thống.
+    * Tích hợp với Cơ sở Dữ liệu Cũ:
+      * Một lớp tích hợp giúp hệ thống mới có thể kết nối với cơ sở dữ liệu DB2 cũ mà không cần thay đổi cấu trúc dữ liệu của mainframe, từ đó giảm thiểu chi phí và rủi ro cho việc thay thế mainframe.
+    * Kiến trúc Ba Tầng (Three-tier Architecture):
+      * Bảo mật: Việc phân chia giữa Tầng Trình diễn, Tầng Ứng dụng và Tầng Dữ liệu giúp bảo vệ dữ liệu quan trọng bằng cách quản lý quyền truy cập ở từng tầng, tránh việc truy cập trực tiếp vào dữ liệu nhạy cảm.
+      * Dễ bảo trì và linh hoạt: Mỗi tầng có thể được mở rộng hoặc thay thế độc lập, giúp dễ dàng nâng cấp hệ thống mà không ảnh hưởng đến toàn bộ hệ thống.
+      * Tính toàn vẹn dữ liệu: Tầng Dữ liệu tập trung lưu trữ dữ liệu, đảm bảo rằng các dịch vụ có quyền truy cập vào dữ liệu chính xác và đồng nhất, tránh tình trạng sai lệch hoặc thiếu dữ liệu.
+    * Tự động hóa Xử lý Tính lương:
+      * Việc lập lịch tự động chạy Dịch vụ Tính lương mỗi tuần (vào thứ Sáu) và cuối tháng giúp đảm bảo rằng nhân viên được trả lương đúng hạn mà không cần can thiệp của con người, làm giảm nguy cơ sai sót và tiết kiệm thời gian.
+    * Tuân thủ và Kiểm toán:
+      * Kiến trúc mô đun này hỗ trợ việc kiểm toán và bảo mật bằng cách ghi lại tất cả các hành động của người dùng (như việc thay đổi thông tin thẻ thời gian hoặc thông tin cá nhân), đồng thời giúp hệ thống tuân thủ các yêu cầu bảo mật một cách dễ dàng hơn.
+   
 Biểu đồ mô tả kiến trúc:
 ![Diagram](https://www.planttext.com/api/plantuml/png/dPI_Qi9G5CRtFCN1fPDB7w282dM8GccGGd48gUI6rfjKaw6KpWukTIobr5I4jbIquD9SEbt9UvmtwKcqQlqRco4XET_vVT_XN99fk7hTzMfNYkBengLkLY6bedXqGAlB3yuWApitARXLWAvp5A_SX3oANlIeDYvTswbCIiUMRaFUGj7aK3B38Oed2_BoYviLc2YASfGUjprEID-67DqgojsAhMgRba445g4SA9FNp9wCMmQBlu4c-vHE3OUXFxTO59oXw8Cglo6BGPVYvXW6lHhvZaY_AZ_n8bdSK6BoXKFPakzyAfn4Yq0s537ek-kI4sq0QXJRcoMcb6HGGD6bUlPmYik5FfoYU5viMHhe3v_wcw0n56sQOpPNGNReLRKnyDsv8OfF6D-ZUA2QHYNxT_v5ya4iQP4VDzduJOSQiIsuzdGEB38pATD01qFw1anZAEkt3-dqqRRD96xRlg-ab4rht7PsOaYIdIJF-q_cXlHxq9OFt3wjEu_EpbqhcIg_Y7ucFm00)
 
-
-
 2. Cơ chế cần có và phân tích.
-Các cơ chế sau đây cần được giải quyết trong hệ thống trả lương mới:
-a. Xác thực và phân quyền
-  * Tại sao: Nhân viên chỉ có thể truy cập vào bảng chấm công và đơn đặt hàng của riêng họ, và quản trị viên phải kiểm soát được dữ liệu nhân viên.
-  * Cách thực hiện: Triển khai kiểm soát truy cập dựa trên vai trò (RBAC) với xác thực bảo mật.
-b. Tính toán lương.
-  * Tại sao: Hệ thống phải xử lý các phương thức thanh toán khác nhau: tính theo giờ với làm thêm giờ, nhân viên hưởng lương và nhân viên hưởng hoa hồng.
-  * Cách thực hiện: Thiết kế các thuật toán tính:
-    * Lương theo giờ bao gồm làm thêm giờ (nếu làm hơn 8 giờ).
-    * Lương cố định hàng tháng.
-    * Hoa hồng dựa trên doanh số với tỷ lệ hoa hồng khác nhau (10%, 15%, v.v.).
-c. Tích hợp cơ sở dữ liệu.
-  * Tại sao: Hệ thống cần truy cập vào cơ sở dữ liệu DB2 để lấy mã số dự án nhưng không được phép thay đổi nó.
-  * Cách thực hiện: Sử dụng lớp tích hợp chỉ đọc để truy cập DB2 và xác minh mã số dự án khi nhân viên ghi chép giờ làm việc.
-d. Xác minh bảng chấm công và đơn đặt hàng.
-  * Tại sao: Bảng chấm công và đơn đặt hàng phải được xác minh để đảm bảo chúng liên quan đến các dự án và dữ liệu bán hàng chính xác.
-  * Cách thực hiện: Triển khai logic xác minh ở lớp dịch vụ để kiểm tra xem bảng chấm công có khớp với mã số dự án hợp lệ hay không và dữ liệu bán hàng được nhập chính xác.
-e. Lựa chọn phương thức thanh toán.
-  * Tại sao: Nhân viên có thể chọn giữa chuyển khoản trực tiếp, gửi qua bưu điện hoặc nhận tại văn phòng.
-  * Cách thực hiện: Lưu trữ các tùy chọn thanh toán của nhân viên và triển khai logic để thực hiện trả lương theo phương thức đã chọn.
-f. Hệ thống báo cáo.
-  * Tại sao: Nhân viên cần truy cập vào giờ làm việc, thanh toán dự án, lịch sử lương và thời gian nghỉ phép còn lại.
-  * Cách thực hiện: Tạo dịch vụ báo cáo, truy vấn cơ sở dữ liệu trả lương và cung cấp các báo cáo được lọc theo yêu cầu của nhân viên.
-g. Xử lý hàng loạt cho việc thanh toán.
-  * Tại sao: Hệ thống trả lương phải tự động chạy vào thứ Sáu và cuối tháng.
-  * Cách thực hiện: Sử dụng các tác vụ hoặc dịch vụ định kỳ kích hoạt tính toán bảng lương và tạo thanh toán dựa trên dữ liệu bảng chấm công và đơn đặt hàng kể từ lần thanh toán trước.
-
-Các cơ chế mong đợi:
-  1.Xác thực và phân quyền (RBAC).
-  2.Tính toán lương (theo giờ, lương cố định, hoa hồng).
-  3.Tích hợp cơ sở dữ liệu (truy cập chỉ đọc DB2).
-  4.Xác minh bảng chấm công và đơn đặt hàng.
-  5.Lựa chọn phương thức thanh toán (chuyển khoản, bưu điện, nhận tại văn phòng).
-  6.Hệ thống báo cáo.
-  7.Xử lý hàng loạt (tự động tạo bảng lương).
+a) Xác thực người dùng và kiểm soát truy cập
+  * Xác thực: Sử dụng Active Directory (AD) cho đăng nhập một lần (SSO) để xác thực người dùng an toàn.
+  * Kiểm soát truy cập: Kiểm soát truy cập dựa trên vai trò (RBAC):
+    * Nhân viên: Có thể xem và chỉnh sửa chấm công, đơn đặt hàng và tùy chọn cá nhân của chính họ.
+    * Quản trị viên trả lương: Có toàn quyền quản lý thông tin nhân viên và chạy báo cáo hành chính
+  * Nhật ký kiểm toán: Lưu lại nhật ký của mỗi lần tương tác để tuân thủ quy định, ghi nhận các hành động do người dùng thực hiện nhằm ngăn chặn các thay đổi không được phép.
+b) Tích hợp dữ liệu với hệ thống cũ (PMDB)
+  * Truy cập dữ liệu: Sử dụng microservice hoặc tích hợp API để truy xuất dữ liệu dự án và mã số chi phí từ PMDB. Đảm bảo hệ thống trả lương chỉ truy cập mà không cập nhật dữ liệu này.
+  * Bộ nhớ đệm dữ liệu: Đối với dữ liệu dự án được truy cập thường xuyên, lưu bộ nhớ đệm các bản ghi dự án liên quan trong cơ sở dữ liệu trả lương nhằm giảm thiểu yêu cầu tới PMDB và cải thiện hiệu suất.
+c) Thông tin nhân viên và xử lý trả lương
+  * Hồ sơ nhân viên: Lưu trữ trong cơ sở dữ liệu trả lương với các thông tin thiết yếu (tên, địa chỉ, loại công việc, tùy chọn thanh toán và các mức lương liên quan).
+  * Chấm công và đơn đặt hàng: Mỗi bản ghi bao gồm mã nhân viên, ngày tháng, mã chi phí, và số giờ hoặc số tiền bán hàng. Dữ liệu này hỗ trợ tính lương và tổng kết chi phí dự án.
+  * Logic xử lý trả lương:
+    * Nhân viên làm theo giờ: Tính toán lương theo giờ và lương ngoài giờ, áp dụng mức 1,5 lần cho các giờ làm thêm trên 8 tiếng/ngày. Thanh toán hàng tuần vào thứ Sáu.
+    * Nhân viên nhận lương cố định: Tính lương tháng, thanh toán vào ngày làm việc cuối cùng của mỗi tháng.
+    * Nhân viên hưởng hoa hồng: Có tỷ lệ hoa hồng trong hồ sơ nhân viên, áp dụng hoa hồng dựa trên các đơn đặt hàng đã nộp.
+d) Lập lịch và xử lý thanh toán tự động
+  * Trình lập lịch trả lương: Sử dụng trình lập lịch công việc nền (ví dụ: Windows Task Scheduler, Quartz.NET) để kích hoạt các lần trả lương mỗi thứ Sáu và vào ngày làm việc cuối cùng của mỗi tháng.
+  * Kiểm tra ngày thanh toán: Khi xử lý thanh toán, kiểm tra rằng tất cả chấm công hoặc đơn đặt hàng đã được gửi từ ngày trả lương trước đó. Tính lương của mỗi nhân viên dựa trên các bản ghi gần đây và phương thức thanh toán đã chọn.
+  * Phương thức thanh toán: Nhân viên có thể chọn nhận thanh toán theo các cách:
+    * Gửi qua bưu điện: In và gửi séc qua đường bưu điện.
+    * Chuyển khoản trực tiếp: Tích hợp API ngân hàng để chuyển tiền vào tài khoản ngân hàng của nhân viên một cách an toàn.
+    * Nhận trực tiếp: Thông báo cho nhân viên phòng trả lương để chuẩn bị séc cho việc nhận tại văn phòng.
+  * Báo cáo cho nhân viên và quản trị viên
+    * Tạo báo cáo: Xây dựng các báo cáo tùy chỉnh dựa trên dữ liệu đã lưu trữ để:
+      * Thông tin cụ thể của nhân viên (ví dụ: số giờ làm việc, tổng lương đã nhận tính đến thời điểm hiện tại, số ngày nghỉ còn lại).
+      * Báo cáo hành chính cho tóm tắt lương, tóm tắt hóa đơn và kiểm tra tuân thủ.
+  * Bảo mật dữ liệu: Sử dụng mã hóa cho dữ liệu nhạy cảm và cung cấp báo cáo chỉ cho nhân viên hoặc quản trị viên được quyền xem.
 
 
 
