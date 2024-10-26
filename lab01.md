@@ -43,14 +43,13 @@ Biểu đồ mô tả kiến trúc:
       
 3.Phân tích ca sử dụng Payment
 -  Xác Định Các Lớp Phân Tích:
-
-  1. Employee:
+  * Employee:
     * Đại diện cho một nhân viên trong tổ chức.
     * Thuộc tính: EmployeeID, Tên, Địa chỉ, v.v.
-  2. PaymentMethod:
+  * PaymentMethod:
     * Đại diện cho một tùy chọn phương thức thanh toán.
     * Thuộc tính: MethodID, MethodName (ví dụ: "Lấy tại chỗ", "Gửi qua bưu điện", "Chuyển khoản trực tiếp").
-  3. PaymentInformation:
+  * PaymentInformation:
     * Lưu trữ thông tin cụ thể về phương thức thanh toán đã chọn.
     * Thuộc tính: PaymentMethodID, Địa chỉ (đối với "Gửi qua bưu điện"), Tên ngân hàng, Số tài khoản (đối với "Chuyển khoản trực tiếp").
 
@@ -60,10 +59,10 @@ Biểu đồ mô tả kiến trúc:
   
  Biểu đồ chuỗi thể hiện các bước sau:
 
-  1. Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán
-  2. Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên
-  3. Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có)
-  Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên
+  * Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán
+  * Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên
+  * Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có)
+  * Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên
   
 - Biểu đồ lớp:
 
@@ -73,12 +72,12 @@ Biểu đồ mô tả kiến trúc:
   * Employee có mối quan hệ một-một với PaymentInformation. Điều này có nghĩa là mỗi nhân viên chỉ có một phương thức thanh toán đang hoạt động.
   * PaymentInformation có mối quan hệ một-một với PaymentMethod. Điều này có nghĩa là mỗi bản ghi thông tin thanh toán được liên kết với một phương thức thanh toán cụ thể.
 - Trách Nhiệm của Các Lớp
-  1.Employee:
+  * Employee:
     * Cung cấp sự lựa chọn phương thức thanh toán.
     * Cung cấp thông tin bổ sung khi cần thiết (ví dụ: địa chỉ, chi tiết ngân hàng).
-  2.PaymentMethod:
+  * PaymentMethod:
     * Lưu trữ các tùy chọn phương thức thanh toán (ví dụ: "Lấy tại chỗ", "Gửi qua bưu điện", "Chuyển khoản trực tiếp").
-  3.PaymentInformation:
+  * PaymentInformation:
     * Lưu trữ chi tiết thanh toán cụ thể cho phương thức đã chọn.
     * Xác thực thông tin được cung cấp.
 
@@ -96,21 +95,21 @@ Biểu đồ mô tả kiến trúc:
 
 ![Diagram](https://www.planttext.com/api/plantuml/png/ZLFBIiD05DtdAovTAT8V259g6wXWAKYA--iqP0QIcPhCb1PnxTeFS575XO8BmLM3gtp9_8apZJQFFkWix-ESSy-zqqqb9bB5aKCYJ5DeZMZ-mc76yW_UWdi7p3kBSKIHtx20k-3BXF6mYCjcO8Pid8XwZ5ES3fZEdeSO6mXoSkh2JB19aGqLwo4F-nJZlk3X9ldW_0lgwTKh3u5GlNgBWUJVFAm8gpOtU4DSz51wg5pmK0Pbz2gGOwf8DImJWpEcoBOn1efLAmbEZHbom4HpdbAohxEdGganKcUFf2BO5rQgRQnJnUYfYuQTgIXeN61SLl0l3IP8QbWCmxMo1a6K_u2dio_8b-NY9iYfZuGMq4EMolC2lrFa8rnuVoMbBZjGhNGFyQ75H4hjNEiwEKTY_QzRU2j4522tPFKRRBSxku_01QbNI-7ilf1rs_OYN5kMlQDpX8dx8PIbCsnJvmXB3Wnmjw4z6gZgZGjpdNsksvrkm2Vs6_y2)
 - Mô Tả và Trách Nhiệm Các Lớp
-  1.Employee:
+  * Employee:
     * Xem và chỉnh sửa thời gian làm việc của riêng mình.
     * Thêm, sửa đổi hoặc xóa các mục thời gian làm việc.
     * Gửi thời gian làm việc để phê duyệt.
     * Thuộc tính: Mã nhân viên, Tên, Vai trò.
-  2.Timecard:
+  * Timecard:
     * Lưu trữ thông tin về một kỳ thanh toán cụ thể.
     * Duy trì danh sách các mục thời gian làm việc.
     * Tính tổng số giờ làm việc.
     * Thuộc tính: Ngày bắt đầu, Ngày kết thúc, Ngày gửi, Trạng thái.
-  3.TimecardEntry:
+  * TimecardEntry:
     * Đại diện cho một ngày làm việc đơn lẻ.
     * Lưu trữ ngày, số giờ làm việc và số dự án.
     * Thuộc tính: Ngày, Số giờ làm việc, Số dự án.
-  4.Project:
+  * Project:
     * Lưu trữ thông tin về một dự án.
     * Thuộc tính: Mã dự án, Tên, Số dự án.
 - Mối Quan Hệ
