@@ -116,6 +116,7 @@ Biểu đồ mô tả kiến trúc:
     * Employee đến Timecard: Mối quan hệ một-nhiều. Một nhân viên có thể có nhiều thời gian làm việc.
     * Timecard đến TimecardEntry: Mối quan hệ một-nhiều. Một thời gian làm việc có thể có nhiều mục thời gian làm việc.
     * TimecardEntry đến Project: Mối quan hệ nhiều-một. Nhiều mục thời gian làm việc có thể được liên kết với một dự án.
+  
 5.Hợp nhất 2 ca sử dụng Payment và Maintain Timecard
 - tài liệu:
   * Giới thiệu
