@@ -56,6 +56,7 @@ Biểu đồ mô tả kiến trúc:
 - Biểu đồ sequence
   ![Diagram](https://www.planttext.com/api/plantuml/png/fP7DIiD04CVlUOev9X1Ve0SljI08KcZmlWqX6qmdjTq80Gy53r94i7U5L16n85Jmb1myRCbxR9_4IMqfwaPQcrCsa__7_BRHwOPHudcmjmzDbdGy52slTnwu7jJ0vIg_mIOlfiKOVOTEBwx36N8dacCqBUE7WZmQAxyQ978IWwkovxYkyI5rOzjiSpwu4psLlxaW0fLzT06vobvnFhY72w3XMSoWNKnZc8q2bL-j1owF4vLV8fpoI6MFvS0o31OA2CcEBTCWb2bKPnX0p--L3vXWRTPVbAO_bmAnSNKgueKarpNHB5JHGWy-Hh-kigVkx5RbrwoyXo61Bnt-Xg_JpKRb-wBWqDgLXMOn6xudL5FHtEQ_g1pxyW4FPOh-YKnRAXyvCWsElZotmkHm-KxR1RXsD8MS861v1bv-iA5F2I0eOjLxPueQ43Pi5Fm9)
  Biểu đồ chuỗi thể hiện các bước sau:
+
   1.Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
   2.Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên.
   3.Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có).
