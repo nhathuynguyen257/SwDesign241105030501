@@ -43,13 +43,14 @@ Biểu đồ mô tả kiến trúc:
       
 3.Phân tích ca sử dụng Payment
 -  Xác Định Các Lớp Phân Tích:
-  1.Employee:
+
+  1. Employee:
     * Đại diện cho một nhân viên trong tổ chức.
     * Thuộc tính: EmployeeID, Tên, Địa chỉ, v.v.
-  2.PaymentMethod:
+  2. PaymentMethod:
     * Đại diện cho một tùy chọn phương thức thanh toán.
     * Thuộc tính: MethodID, MethodName (ví dụ: "Lấy tại chỗ", "Gửi qua bưu điện", "Chuyển khoản trực tiếp").
-  3.PaymentInformation:
+  3. PaymentInformation:
     * Lưu trữ thông tin cụ thể về phương thức thanh toán đã chọn.
     * Thuộc tính: PaymentMethodID, Địa chỉ (đối với "Gửi qua bưu điện"), Tên ngân hàng, Số tài khoản (đối với "Chuyển khoản trực tiếp").
 
@@ -59,9 +60,9 @@ Biểu đồ mô tả kiến trúc:
   
  Biểu đồ chuỗi thể hiện các bước sau:
 
-  1.Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
-  2.Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên.
-  3.Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có).
+  1. Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
+  2. Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên.
+  3. Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có).
   Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên.
   
 - Biểu đồ lớp:
