@@ -59,7 +59,7 @@ Biểu đồ mô tả kiến trúc:
   1.Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
   2.Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên.
   3.Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có).
-  H4.ệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên.
+  Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên.
   
 - Biểu đồ lớp:
   ![Diagram](https://www.planttext.com/api/plantuml/png/lLD1JiCm4Bpx5JvIGJvG8LH4a42Y5L83TzTP6gk94s9R8WBE277g2r0vSk41EGRnZ_m4XwHfd8HmmpVlZdT7C-E9a2IMAl0HzOaGUEPbR_oQPUyStoEippu4aHyc0EVs6CzbpFYoh4kDCIkVwpnz8PXwUVfiTYAI1C3b5AGNkcDysRoM204-K6aqzaRe4LMqZCQMMV1pSv88wcsx1uokhY8CTnAustrVuwQ4-R-YoYqQeKSVksuCGdGtsIpMp6s8Gi7ayAW5uQiP2S0KXr0QAYvdAbX0t9r_bgTFZfPqpPUEHxZdXDccDYU6MmMYfLlNiL69Lf5B9Fm5Fi13TZLCEVdQpFFqrSxJZmkcMQejgnl6tTDgxZ-mQMJMievQwJADE7omh2eRVPqY3NrrmsFKxqYnkgF807R76dM5R07GH8Ug-AJV)
