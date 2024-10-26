@@ -19,120 +19,139 @@ Biểu đồ mô tả kiến trúc:
 ![Diagram](https://www.planttext.com/api/plantuml/png/dPI_Qi9G5CRtFCN1fPDB7w282dM8GccGGd48gUI6rfjKaw6KpWukTIobr5I4jbIquD9SEbt9UvmtwKcqQlqRco4XET_vVT_XN99fk7hTzMfNYkBengLkLY6bedXqGAlB3yuWApitARXLWAvp5A_SX3oANlIeDYvTswbCIiUMRaFUGj7aK3B38Oed2_BoYviLc2YASfGUjprEID-67DqgojsAhMgRba445g4SA9FNp9wCMmQBlu4c-vHE3OUXFxTO59oXw8Cglo6BGPVYvXW6lHhvZaY_AZ_n8bdSK6BoXKFPakzyAfn4Yq0s537ek-kI4sq0QXJRcoMcb6HGGD6bUlPmYik5FfoYU5viMHhe3v_wcw0n56sQOpPNGNReLRKnyDsv8OfF6D-ZUA2QHYNxT_v5ya4iQP4VDzduJOSQiIsuzdGEB38pATD01qFw1anZAEkt3-dqqRRD96xRlg-ab4rht7PsOaYIdIJF-q_cXlHxq9OFt3wjEu_EpbqhcIg_Y7ucFm00)
 
 2. Cơ chế cần có và phân tích.
-
-a) Xác thực người dùng và kiểm soát truy cập
-  * Xác thực: Sử dụng Active Directory (AD) cho đăng nhập một lần (SSO) để xác thực người dùng an toàn.
-  * Kiểm soát truy cập: Kiểm soát truy cập dựa trên vai trò (RBAC):
-    * Nhân viên: Có thể xem và chỉnh sửa chấm công, đơn đặt hàng và tùy chọn cá nhân của chính họ.
-    * Quản trị viên trả lương: Có toàn quyền quản lý thông tin nhân viên và chạy báo cáo hành chính
-  * Nhật ký kiểm toán: Lưu lại nhật ký của mỗi lần tương tác để tuân thủ quy định, ghi nhận các hành động do người dùng thực hiện nhằm ngăn chặn các thay đổi không được phép.
-b) Tích hợp dữ liệu với hệ thống cũ (PMDB)
-  * Truy cập dữ liệu: Sử dụng microservice hoặc tích hợp API để truy xuất dữ liệu dự án và mã số chi phí từ PMDB. Đảm bảo hệ thống trả lương chỉ truy cập mà không cập nhật dữ liệu này.
-  * Bộ nhớ đệm dữ liệu: Đối với dữ liệu dự án được truy cập thường xuyên, lưu bộ nhớ đệm các bản ghi dự án liên quan trong cơ sở dữ liệu trả lương nhằm giảm thiểu yêu cầu tới PMDB và cải thiện hiệu suất.
-c) Thông tin nhân viên và xử lý trả lương
-  * Hồ sơ nhân viên: Lưu trữ trong cơ sở dữ liệu trả lương với các thông tin thiết yếu (tên, địa chỉ, loại công việc, tùy chọn thanh toán và các mức lương liên quan).
-  * Chấm công và đơn đặt hàng: Mỗi bản ghi bao gồm mã nhân viên, ngày tháng, mã chi phí, và số giờ hoặc số tiền bán hàng. Dữ liệu này hỗ trợ tính lương và tổng kết chi phí dự án.
-  * Logic xử lý trả lương:
-    * Nhân viên làm theo giờ: Tính toán lương theo giờ và lương ngoài giờ, áp dụng mức 1,5 lần cho các giờ làm thêm trên 8 tiếng/ngày. Thanh toán hàng tuần vào thứ Sáu.
-    * Nhân viên nhận lương cố định: Tính lương tháng, thanh toán vào ngày làm việc cuối cùng của mỗi tháng.
-    * Nhân viên hưởng hoa hồng: Có tỷ lệ hoa hồng trong hồ sơ nhân viên, áp dụng hoa hồng dựa trên các đơn đặt hàng đã nộp.
-d) Lập lịch và xử lý thanh toán tự động
-  * Trình lập lịch trả lương: Sử dụng trình lập lịch công việc nền (ví dụ: Windows Task Scheduler, Quartz.NET) để kích hoạt các lần trả lương mỗi thứ Sáu và vào ngày làm việc cuối cùng của mỗi tháng.
-  * Kiểm tra ngày thanh toán: Khi xử lý thanh toán, kiểm tra rằng tất cả chấm công hoặc đơn đặt hàng đã được gửi từ ngày trả lương trước đó. Tính lương của mỗi nhân viên dựa trên các bản ghi gần đây và phương thức thanh toán đã chọn.
-  * Phương thức thanh toán: Nhân viên có thể chọn nhận thanh toán theo các cách:
-    * Gửi qua bưu điện: In và gửi séc qua đường bưu điện.
-    * Chuyển khoản trực tiếp: Tích hợp API ngân hàng để chuyển tiền vào tài khoản ngân hàng của nhân viên một cách an toàn.
-    * Nhận trực tiếp: Thông báo cho nhân viên phòng trả lương để chuẩn bị séc cho việc nhận tại văn phòng.
-  * Báo cáo cho nhân viên và quản trị viên
-    * Tạo báo cáo: Xây dựng các báo cáo tùy chỉnh dựa trên dữ liệu đã lưu trữ để:
-      * Thông tin cụ thể của nhân viên (ví dụ: số giờ làm việc, tổng lương đã nhận tính đến thời điểm hiện tại, số ngày nghỉ còn lại).
-      * Báo cáo hành chính cho tóm tắt lương, tóm tắt hóa đơn và kiểm tra tuân thủ.
-  * Bảo mật dữ liệu: Sử dụng mã hóa cho dữ liệu nhạy cảm và cung cấp báo cáo chỉ cho nhân viên hoặc quản trị viên được quyền xem.
-
-
-
+  * Cơ chế ghi nhận thời gian và thanh toán
+    * Nhân viên theo giờ:
+      * Ghi nhận số giờ làm việc hàng ngày.
+      * Tính lương theo công thức: Lương = Giờ làm việc bình thường * Mức lương theo giờ + Giờ làm thêm * Mức lương theo giờ * 1.5.
+      * Lương được trả hàng tuần vào mỗi thứ Sáu.
+    * Nhân viên lương cố định:
+      * Ghi nhận số giờ làm việc cho các mục đích theo dõi.
+      * Lương cố định được trả vào ngày làm việc cuối cùng của tháng.
+    * Nhân viên có hoa hồng:
+      * Ghi nhận đơn đặt hàng mua để tính hoa hồng.
+      * Tính toán hoa hồng dựa trên tỷ lệ phần trăm đã được xác định (10%, 15%, 25%, 35%).
+      * Tổng hợp thanh toán cho cả lương và hoa hồng.
+  * Báo cáo và truy vấn thông tin
+    Nhân viên có thể truy vấn các thông tin:
+      * Số giờ làm việc.
+      * Tổng giờ làm việc đã lập hóa đơn cho từng dự án.
+      * Tổng lương nhận được từ đầu năm.
+      * Thời gian nghỉ còn lại.
+  * Tự động hóa quy trình thanh toán
+    * Hệ thống sẽ tự động chạy vào mỗi thứ Sáu và ngày làm việc cuối cùng của tháng.
+    * Hệ thống sẽ tổng hợp dữ liệu từ lần thanh toán trước đó đến ngày thanh toán hiện tại để tính toán chính xác.
+      
 3.Phân tích ca sử dụng Payment
 -  Xác Định Các Lớp Phân Tích:
-   * Employee: Đại diện cho nhân viên muốn chọn phương thức thanh toán.
-   * Employee: Đại diện cho nhân viên muốn chọn phương thức thanh toán.
-   * PickupPayment: Thể hiện phương thức thanh toán trực tiếp.
-   * MailPayment: Thể hiện phương thức thanh toán qua đường bưu điện.
-   * DirectDepositPayment: Thể hiện phương thức thanh toán chuyển khoản ngân hàng.
-   * PaymentService: Xử lý và quản lý các lựa chọn thanh toán từ nhân viên.
-   * Database: Lớp hỗ trợ lưu trữ và cập nhật dữ liệu vào hệ thống.
+  1.Employee:
+    * Đại diện cho một nhân viên trong tổ chức.
+    * Thuộc tính: EmployeeID, Tên, Địa chỉ, v.v.
+  2.PaymentMethod:
+    * Đại diện cho một tùy chọn phương thức thanh toán.
+    * Thuộc tính: MethodID, MethodName (ví dụ: "Lấy tại chỗ", "Gửi qua bưu điện", "Chuyển khoản trực tiếp").
+  3.PaymentInformation:
+    * Lưu trữ thông tin cụ thể về phương thức thanh toán đã chọn.
+    * Thuộc tính: PaymentMethodID, Địa chỉ (đối với "Gửi qua bưu điện"), Tên ngân hàng, Số tài khoản (đối với "Chuyển khoản trực tiếp").
 
 - Biểu đồ sequence
-
-  Mô Tả Biểu Đồ Tuần Tự
-  Biểu đồ tuần tự cho ca sử dụng "Chọn Phương Thức Thanh Toán" sẽ mô tả trình tự các tương tác giữa các lớp khi nhân viên chọn phương thức thanh toán.
-  * Employee bắt đầu quy trình chọn phương thức thanh toán.
-  * PaymentService yêu cầu Employee xác định phương thức thanh toán mong muốn.
-  * Employee chọn một trong ba phương thức thanh toán: PickupPayment, MailPayment, hoặc DirectDepositPayment.
-    * Nếu chọn MailPayment, hệ thống yêu cầu cung cấp địa chỉ.
-    * Nếu chọn DirectDepositPayment, hệ thống yêu cầu cung cấp tên ngân hàng và số tài khoản.
-  * Sau khi nhận được thông tin từ Employee, PaymentService cập nhật thông tin vào Database để lưu trữ phương thức thanh toán của nhân viên.
-
   ![Diagram](https://www.planttext.com/api/plantuml/png/fP7DIiD04CVlUOev9X1Ve0SljI08KcZmlWqX6qmdjTq80Gy53r94i7U5L16n85Jmb1myRCbxR9_4IMqfwaPQcrCsa__7_BRHwOPHudcmjmzDbdGy52slTnwu7jJ0vIg_mIOlfiKOVOTEBwx36N8dacCqBUE7WZmQAxyQ978IWwkovxYkyI5rOzjiSpwu4psLlxaW0fLzT06vobvnFhY72w3XMSoWNKnZc8q2bL-j1owF4vLV8fpoI6MFvS0o31OA2CcEBTCWb2bKPnX0p--L3vXWRTPVbAO_bmAnSNKgueKarpNHB5JHGWy-Hh-kigVkx5RbrwoyXo61Bnt-Xg_JpKRb-wBWqDgLXMOn6xudL5FHtEQ_g1pxyW4FPOh-YKnRAXyvCWsElZotmkHm-KxR1RXsD8MS861v1bv-iA5F2I0eOjLxPueQ43Pi5Fm9)
- 
-  - Biểu đồ lớp:
-    Biểu đồ lớp sau mô tả các lớp phân tích, thuộc tính và mối quan hệ giữa chúng:
-    * Employee có quan hệ 1-1 với PaymentMethod (kế thừa thành các lớp con).
-    * PaymentService đóng vai trò trung gian giữa Employee và Database để cập nhật thông tin thanh toán.
-  ![Diagram](https://www.planttext.com/api/plantuml/png/lLD1JiCm4Bpx5JvIGJvG8LH4a42Y5L83TzTP6gk94s9R8WBE277g2r0vSk41EGRnZ_m4XwHfd8HmmpVlZdT7C-E9a2IMAl0HzOaGUEPbR_oQPUyStoEippu4aHyc0EVs6CzbpFYoh4kDCIkVwpnz8PXwUVfiTYAI1C3b5AGNkcDysRoM204-K6aqzaRe4LMqZCQMMV1pSv88wcsx1uokhY8CTnAustrVuwQ4-R-YoYqQeKSVksuCGdGtsIpMp6s8Gi7ayAW5uQiP2S0KXr0QAYvdAbX0t9r_bgTFZfPqpPUEHxZdXDccDYU6MmMYfLlNiL69Lf5B9Fm5Fi13TZLCEVdQpFFqrSxJZmkcMQejgnl6tTDgxZ-mQMJMievQwJADE7omh2eRVPqY3NrrmsFKxqYnkgF807R76dM5R07GH8Ug-AJV)
-  -  xác định một số thuộc tính và quan hệ giữa các lớp phân tích:
-      1.Employee
-      Thuộc tính:
-        * employeeId: Mã định danh duy nhất cho mỗi nhân viên.
-            * name: Tên của nhân viên.
-            * address: Địa chỉ hiện tại của nhân viên.
-            * selectedPaymentMethod: Phương thức thanh toán đã chọn.
-        * Quan hệ:
-        Kết hợp (Association) với PaymentMethod: Mỗi Employee có thể chọn một PaymentMethod nhất định.
-      2.PaymentMethod (Lớp trừu tượng)
-        * Thuộc tính:
-          * methodType: Loại phương thức thanh toán (ví dụ: "pick up", "mail", "direct deposit").
-        * Quan hệ:
-          * Kế thừa (Inheritance) với các lớp con như PickupPayment, MailPayment, và DirectDepositPayment, cung cấp cấu trúc cơ bản mà các phương thức thanh toán cụ thể có thể kế thừa.
-      3.PickupPayment
-        * Thuộc tính:
-          * location: Địa điểm nhận séc khi chọn phương thức này.
-        * Quan hệ:
-          * Kế thừa từ lớp PaymentMethod để cụ thể hóa phương thức nhận séc trực tiếp.
-      4.MailPayment
-        * Thuộc tính:
-          * mailingAddress: Địa chỉ để gửi séc cho nhân viên.
-        * Quan hệ:
-          * Kế thừa từ PaymentMethod để cụ thể hóa phương thức nhận séc qua đường bưu điện.
-      5.DirectDepositPayment
-        * Thuộc tính:
-          * bankName: Tên ngân hàng của nhân viên.
-          * accountNumber: Số tài khoản ngân hàng để chuyển khoản trực tiếp.
-        * Quan hệ:
-          * Kế thừa từ PaymentMethod để cụ thể hóa phương thức thanh toán chuyển khoản.
-      6.PaymentService
-        * Thuộc tính:
-          * paymentMethods: Danh sách các phương thức thanh toán khả dụng.
-        * Phương thức:
-          * processPayment(): Xử lý và lưu thông tin khi nhân viên chọn phương thức thanh toán.
-        * Quan hệ:
-          * Kết hợp với Database: PaymentService cập nhật thông tin trong Database khi nhân viên chọn phương thức thanh toán.
-      7.Database
-        * Thuộc tính:
-          * employeeData: Dữ liệu nhân viên bao gồm các thông tin về phương thức thanh toán đã chọn.
-        * Phương thức:
-          * updateData(): Cập nhật thông tin phương thức thanh toán trong hệ thống.
-        * Quan hệ:
-          * Kết hợp với PaymentService: Database lưu trữ và cập nhật dữ liệu từ PaymentService.
+ Biểu đồ chuỗi thể hiện các bước sau:
+  1.Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
+  2.Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên.
+  3.Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có).
+  H4.ệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên.
   
- 
-
+- Biểu đồ lớp:
+  ![Diagram](https://www.planttext.com/api/plantuml/png/lLD1JiCm4Bpx5JvIGJvG8LH4a42Y5L83TzTP6gk94s9R8WBE277g2r0vSk41EGRnZ_m4XwHfd8HmmpVlZdT7C-E9a2IMAl0HzOaGUEPbR_oQPUyStoEippu4aHyc0EVs6CzbpFYoh4kDCIkVwpnz8PXwUVfiTYAI1C3b5AGNkcDysRoM204-K6aqzaRe4LMqZCQMMV1pSv88wcsx1uokhY8CTnAustrVuwQ4-R-YoYqQeKSVksuCGdGtsIpMp6s8Gi7ayAW5uQiP2S0KXr0QAYvdAbX0t9r_bgTFZfPqpPUEHxZdXDccDYU6MmMYfLlNiL69Lf5B9Fm5Fi13TZLCEVdQpFFqrSxJZmkcMQejgnl6tTDgxZ-mQMJMievQwJADE7omh2eRVPqY3NrrmsFKxqYnkgF807R76dM5R07GH8Ug-AJV)
+ Biểu đồ lớp thể hiện các mối quan hệ sau:
+  * Employee có mối quan hệ một-một với PaymentInformation. Điều này có nghĩa là mỗi nhân viên chỉ có một phương thức thanh toán đang hoạt động.
+  * PaymentInformation có mối quan hệ một-một với PaymentMethod. Điều này có nghĩa là mỗi bản ghi thông tin thanh toán được liên kết với một phương thức thanh toán cụ thể.
+- Trách Nhiệm của Các Lớp
+  1.Employee:
+    * Cung cấp sự lựa chọn phương thức thanh toán.
+    * Cung cấp thông tin bổ sung khi cần thiết (ví dụ: địa chỉ, chi tiết ngân hàng).
+  2.PaymentMethod:
+    * Lưu trữ các tùy chọn phương thức thanh toán (ví dụ: "Lấy tại chỗ", "Gửi qua bưu điện", "Chuyển khoản trực tiếp").
+  3.PaymentInformation:
+    * Lưu trữ chi tiết thanh toán cụ thể cho phương thức đã chọn.
+    * Xác thực thông tin được cung cấp.
 
 4.Phân tích ca sử dụng Maintain Timecard
+- Xác Định Các Lớp Phân Tích:
+  * Employee: Đại diện cho một nhân viên có thể gửi thời gian làm việc.
+  * Timecard: Đại diện cho một thời gian làm việc với các chi tiết như ngày bắt đầu, ngày kết thúc, ngày gửi và danh sách các mục thời gian làm việc.
+  * TimecardEntry: Đại diện cho một mục đơn lẻ trên thời gian làm việc, bao gồm ngày, số giờ làm việc và số dự án liên quan.
+  * Project: Đại diện cho một dự án với một số dự án duy nhất.
 
 - Biểu đồ Sequence
 ![Diagram](https://www.planttext.com/api/plantuml/png/ZLJDQi904BxlKmov-mA2HQgYq5PQzD0UuofkQBAAReIUU_3Ga_JGGobeHGg2eBIz99GUjlWU-oQTtQXKaqWl2SdCzpEpNvBl2xidVCybDXMT7bXL9byv31mvvnROVIYHBZOurEdQN81LKU4G15FXYBVXL0LJl56cWfa7L7xmji7KQqT0Lxv6WIk_eAZ25SX997HvSO1APTzlgo5jL4NNA4HDKw5AI2u7LGGlkj36mWjAZhrD3-Hof0IP4xIQXHivzu6guCq75xNke15N1gPn78GA9WwnNP4qFFoCv1HRmiTj8w20aSd2-V-eMsw_bSXDsNfffv7NyKKdaTnJuJEoyYQ9cd7DMozDcpFeomd5w-4IyU4TtmQVd202CfjL5Oz0o6QZsVIj3-Gu0LVNi48r2mK3unej4j2KTP9KyPZBAbmuYUEdd7Cx3K1sAxt6AKreLpJknIIW77E8tTCkXYWS_ZsSlR543uyAHGMJ4qU3mJAfCOwilS2ibtwYHHEHkFWjYz8Kzr32W4J5XiIOOEqfYeJUtPaAleMs4vYlOeUe8EizDnjuqEKTd7Nas4Hm9aWUMVJFunS0)
 
 - Biểu đồ lớp:
-![Diagram](https://www.planttext.com/api/plantuml/png/ZLFBIiD05DtdAovTAT8V259g6wXWAKYA--iqP0QIcPhCb1PnxTeFS575XO8BmLM3gtp9_8apZJQFFkWix-ESSy-zqqqb9bB5aKCYJ5DeZMZ-mc76yW_UWdi7p3kBSKIHtx20k-3BXF6mYCjcO8Pid8XwZ5ES3fZEdeSO6mXoSkh2JB19aGqLwo4F-nJZlk3X9ldW_0lgwTKh3u5GlNgBWUJVFAm8gpOtU4DSz51wg5pmK0Pbz2gGOwf8DImJWpEcoBOn1efLAmbEZHbom4HpdbAohxEdGganKcUFf2BO5rQgRQnJnUYfYuQTgIXeN61SLl0l3IP8QbWCmxMo1a6K_u2dio_8b-NY9iYfZuGMq4EMolC2lrFa8rnuVoMbBZjGhNGFyQ75H4hjNEiwEKTY_QzRU2j4522tPFKRRBSxku_01QbNI-7ilf1rs_OYN5kMlQDpX8dx8PIbCsnJvmXB3Wnmjw4z6gZgZGjpdNsksvrkm2Vs6_y2)
 
+![Diagram](https://www.planttext.com/api/plantuml/png/ZLFBIiD05DtdAovTAT8V259g6wXWAKYA--iqP0QIcPhCb1PnxTeFS575XO8BmLM3gtp9_8apZJQFFkWix-ESSy-zqqqb9bB5aKCYJ5DeZMZ-mc76yW_UWdi7p3kBSKIHtx20k-3BXF6mYCjcO8Pid8XwZ5ES3fZEdeSO6mXoSkh2JB19aGqLwo4F-nJZlk3X9ldW_0lgwTKh3u5GlNgBWUJVFAm8gpOtU4DSz51wg5pmK0Pbz2gGOwf8DImJWpEcoBOn1efLAmbEZHbom4HpdbAohxEdGganKcUFf2BO5rQgRQnJnUYfYuQTgIXeN61SLl0l3IP8QbWCmxMo1a6K_u2dio_8b-NY9iYfZuGMq4EMolC2lrFa8rnuVoMbBZjGhNGFyQ75H4hjNEiwEKTY_QzRU2j4522tPFKRRBSxku_01QbNI-7ilf1rs_OYN5kMlQDpX8dx8PIbCsnJvmXB3Wnmjw4z6gZgZGjpdNsksvrkm2Vs6_y2)
+- Mô Tả và Trách Nhiệm Các Lớp
+  1.Employee:
+    * Xem và chỉnh sửa thời gian làm việc của riêng mình.
+    * Thêm, sửa đổi hoặc xóa các mục thời gian làm việc.
+    * Gửi thời gian làm việc để phê duyệt.
+    * Thuộc tính: Mã nhân viên, Tên, Vai trò.
+  2.Timecard:
+    * Lưu trữ thông tin về một kỳ thanh toán cụ thể.
+    * Duy trì danh sách các mục thời gian làm việc.
+    * Tính tổng số giờ làm việc.
+    * Thuộc tính: Ngày bắt đầu, Ngày kết thúc, Ngày gửi, Trạng thái.
+  3.TimecardEntry:
+    * Đại diện cho một ngày làm việc đơn lẻ.
+    * Lưu trữ ngày, số giờ làm việc và số dự án.
+    * Thuộc tính: Ngày, Số giờ làm việc, Số dự án.
+  4.Project:
+    * Lưu trữ thông tin về một dự án.
+    * Thuộc tính: Mã dự án, Tên, Số dự án.
+- Mối Quan Hệ
+    * Employee đến Timecard: Mối quan hệ một-nhiều. Một nhân viên có thể có nhiều thời gian làm việc.
+    * Timecard đến TimecardEntry: Mối quan hệ một-nhiều. Một thời gian làm việc có thể có nhiều mục thời gian làm việc.
+    * TimecardEntry đến Project: Mối quan hệ nhiều-một. Nhiều mục thời gian làm việc có thể được liên kết với một dự án.
+5.Hợp nhất 2 ca sử dụng Payment và Maintain Timecard
+- tài liệu:
+  1.Giới thiệu
+   * Tài liệu này mô tả ca sử dụng hợp nhất giữa việc "Duy Trì Thời Gian Làm Việc" và "Chọn Phương Thức Thanh Toán". Quy trình này cho phép nhân viên nhập thông tin thời gian làm việc, chọn phương thức thanh toán cho lương, và gửi thông tin đó cho hệ thống để xử lý.
+  2.Mục tiêu
+   * Mục tiêu của ca sử dụng này là cung cấp một cách thức hiệu quả để nhân viên quản lý thời gian làm việc của họ và lựa chọn phương thức nhận lương, đồng thời đảm bảo thông tin được lưu trữ một cách chính xác và an toàn.
+  3.Các bên liên quan
+      * Nhân viên: Người sử dụng hệ thống để nhập giờ làm việc và chọn phương thức thanh toán.
+      * Hệ thống: Phần mềm quản lý thời gian làm việc và thanh toán.
+      * Cơ sở dữ liệu: Lưu trữ thông tin về thời gian làm việc và phương thức thanh toán.
+  4.Các lớp phân tích
+    1.Employee:
+      * Mô tả: Đại diện cho nhân viên trong tổ chức.
+      * Thuộc tính: EmployeeID, Tên, Địa chỉ, v.v.
+    5.Timecard:
+      * Mô tả: Đại diện cho thời gian làm việc của nhân viên.
+      * Thuộc tính: StartDate, EndDate, SubmittedDate, Status.
+    6.TimecardEntry:
+      * Mô tả: Đại diện cho một mục thời gian làm việc cụ thể.
+      * Thuộc tính: Date, HoursWorked, ChargeNumber.
+    7.PaymentMethod:
+      * Mô tả: Đại diện cho các tùy chọn phương thức thanh toán.
+      * Thuộc tính: MethodID, MethodName.
+    8.PaymentInformation:
+      * Mô tả: Lưu trữ thông tin chi tiết về phương thức thanh toán đã chọn.
+      * Thuộc tính: PaymentMethodID, Address (đối với "Gửi qua bưu điện"), BankName, AccountNumber (đối với "Chuyển khoản trực tiếp").
+  5.Quy Trình Thực Hiện
+      * Nhập Thời Gian Làm Việc
+          * Nhân viên gửi yêu cầu để xem thời gian làm việc.
+          * Hệ thống lấy thời gian làm việc hiện tại và hiển thị cho nhân viên.
+          * Nhân viên nhập giờ làm việc cho các ngày cụ thể và gán cho các dự án.
+          * Nhân viên gửi thông tin thời gian làm việc cho hệ thống.
+          * Hệ thống lưu thông tin giờ làm việc và gửi yêu cầu xác nhận gửi.
+          * Hệ thống nhận được kết quả và thông báo cho nhân viên.
+      * Chọn Phương Thức Thanh Toán
+          * Nhân viên gửi yêu cầu chọn phương thức thanh toán.
+          * Hệ thống lấy danh sách phương thức thanh toán có sẵn và hiển thị cho nhân viên.
+          * Nhân viên chọn phương thức thanh toán và nhập thông tin cần thiết (ví dụ: địa chỉ hoặc chi tiết tài khoản ngân hàng).
+          * Hệ thống lưu thông tin thanh toán và xác thực thông tin.
+          * Hệ thống thông báo kết quả xác thực cho nhân viên.
+          - sơ đồ hợp nhất
+          Biểu đồ chuỗi mô tả quy trình tương tác giữa các đối tượng liên quan (Nhân viên, Hệ thống, Thời gian làm việc, Phương thức thanh toán, và Thông tin thanh toán) trong quy trình này đã được cung cấp trước đó.
+  ![Diagram](https://www.planttext.com/api/plantuml/png/hPL1IiD058RtESMxW1SeH8GksaKH5qNSXPYMp60xZUcaj4jnuK9SU812enInMAZWAbcu6EWzvYREoxIQD4rCnTMGp9ll_VFFFyd9aDi-3_ezmtRum8TJ8fwOTKx5WXcUcg4EzMp6eIdZEwjDPFp8tCm4lfjIgq5jPhN4hA_Mgb8dKtD6rgjroDm4yEgemMR4QWz4o7POuWEhACkK6AQfTCbewMsw0NO3x0Qw6vYcaL8EHySPmJLeo7X9OI8M0JWoUWbWtEq3rp0NOJs4ZRJqz5945Mon1YqPpIT5620uCE0o2gbHmCWhRVioUeQHZ6ygwqljl0PDLNFBahNtXOHTimftkB7TLO_J3A62spmvJU2K_OFJwrMG1kO5LKRbeo121nXkL75nya-7TIMZJmxN0RxG58njNLK-iEyB0Fe2G99kID9zU7GTpVIsJAwPF67ovCRicb5o0RSfxk3geRA2b99BIANs5ECFY7EPi78Jwxzw1YCnqodmKa7R4wjzdwXyGCjEeuXnWK54PUzEMiB-yifX7FzGZNAlTIEu5E40o43Cac_N73aY1EwBDqQCaoxhuD_Y2m00)
   
