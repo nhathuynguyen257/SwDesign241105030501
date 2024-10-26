@@ -118,31 +118,31 @@ Biểu đồ mô tả kiến trúc:
     * TimecardEntry đến Project: Mối quan hệ nhiều-một. Nhiều mục thời gian làm việc có thể được liên kết với một dự án.
 5.Hợp nhất 2 ca sử dụng Payment và Maintain Timecard
 - tài liệu:
-  1.Giới thiệu
+  ** Giới thiệu
    * Tài liệu này mô tả ca sử dụng hợp nhất giữa việc "Duy Trì Thời Gian Làm Việc" và "Chọn Phương Thức Thanh Toán". Quy trình này cho phép nhân viên nhập thông tin thời gian làm việc, chọn phương thức thanh toán cho lương, và gửi thông tin đó cho hệ thống để xử lý.
-  2.Mục tiêu
+  ** Mục tiêu
    * Mục tiêu của ca sử dụng này là cung cấp một cách thức hiệu quả để nhân viên quản lý thời gian làm việc của họ và lựa chọn phương thức nhận lương, đồng thời đảm bảo thông tin được lưu trữ một cách chính xác và an toàn.
-  3.Các bên liên quan
+  ** Các bên liên quan
       * Nhân viên: Người sử dụng hệ thống để nhập giờ làm việc và chọn phương thức thanh toán.
       * Hệ thống: Phần mềm quản lý thời gian làm việc và thanh toán.
       * Cơ sở dữ liệu: Lưu trữ thông tin về thời gian làm việc và phương thức thanh toán.
-  4.Các lớp phân tích
-    1.Employee:
+  ** Các lớp phân tích
+    * Employee:
       * Mô tả: Đại diện cho nhân viên trong tổ chức.
       * Thuộc tính: EmployeeID, Tên, Địa chỉ, v.v.
-    5.Timecard:
+    * Timecard:
       * Mô tả: Đại diện cho thời gian làm việc của nhân viên.
       * Thuộc tính: StartDate, EndDate, SubmittedDate, Status.
-    6.TimecardEntry:
+    * TimecardEntry:
       * Mô tả: Đại diện cho một mục thời gian làm việc cụ thể.
       * Thuộc tính: Date, HoursWorked, ChargeNumber.
-    7.PaymentMethod:
+    * PaymentMethod:
       * Mô tả: Đại diện cho các tùy chọn phương thức thanh toán.
       * Thuộc tính: MethodID, MethodName.
-    8.PaymentInformation:
+    * PaymentInformation:
       * Mô tả: Lưu trữ thông tin chi tiết về phương thức thanh toán đã chọn.
       * Thuộc tính: PaymentMethodID, Address (đối với "Gửi qua bưu điện"), BankName, AccountNumber (đối với "Chuyển khoản trực tiếp").
-  5.Quy Trình Thực Hiện
+  ** Quy Trình Thực Hiện
       * Nhập Thời Gian Làm Việc
           * Nhân viên gửi yêu cầu để xem thời gian làm việc.
           * Hệ thống lấy thời gian làm việc hiện tại và hiển thị cho nhân viên.
