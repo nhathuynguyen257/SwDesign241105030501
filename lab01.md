@@ -60,10 +60,10 @@ Biểu đồ mô tả kiến trúc:
   
  Biểu đồ chuỗi thể hiện các bước sau:
 
-  1. Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
-  2. Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên.
-  3. Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có).
-  Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên.
+  1. Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán
+  2. Hệ thống trình bày các tùy chọn phương thức thanh toán có sẵn cho nhân viên
+  3. Nhân viên chọn một phương thức thanh toán và cung cấp thông tin cần thiết (nếu có)
+  Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên
   
 - Biểu đồ lớp:
 
