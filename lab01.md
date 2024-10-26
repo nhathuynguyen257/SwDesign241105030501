@@ -54,7 +54,9 @@ Biểu đồ mô tả kiến trúc:
     * Thuộc tính: PaymentMethodID, Địa chỉ (đối với "Gửi qua bưu điện"), Tên ngân hàng, Số tài khoản (đối với "Chuyển khoản trực tiếp").
 
 - Biểu đồ sequence
+
   ![Diagram](https://www.planttext.com/api/plantuml/png/fP7DIiD04CVlUOev9X1Ve0SljI08KcZmlWqX6qmdjTq80Gy53r94i7U5L16n85Jmb1myRCbxR9_4IMqfwaPQcrCsa__7_BRHwOPHudcmjmzDbdGy52slTnwu7jJ0vIg_mIOlfiKOVOTEBwx36N8dacCqBUE7WZmQAxyQ978IWwkovxYkyI5rOzjiSpwu4psLlxaW0fLzT06vobvnFhY72w3XMSoWNKnZc8q2bL-j1owF4vLV8fpoI6MFvS0o31OA2CcEBTCWb2bKPnX0p--L3vXWRTPVbAO_bmAnSNKgueKarpNHB5JHGWy-Hh-kigVkx5RbrwoyXo61Bnt-Xg_JpKRb-wBWqDgLXMOn6xudL5FHtEQ_g1pxyW4FPOh-YKnRAXyvCWsElZotmkHm-KxR1RXsD8MS861v1bv-iA5F2I0eOjLxPueQ43Pi5Fm9)
+  
  Biểu đồ chuỗi thể hiện các bước sau:
 
   1.Nhân viên gửi yêu cầu cho hệ thống để chọn phương thức thanh toán.
@@ -63,7 +65,9 @@ Biểu đồ mô tả kiến trúc:
   Hệ thống xác thực thông tin đầu vào và cập nhật thông tin thanh toán của nhân viên.
   
 - Biểu đồ lớp:
+
   ![Diagram](https://www.planttext.com/api/plantuml/png/lLD1JiCm4Bpx5JvIGJvG8LH4a42Y5L83TzTP6gk94s9R8WBE277g2r0vSk41EGRnZ_m4XwHfd8HmmpVlZdT7C-E9a2IMAl0HzOaGUEPbR_oQPUyStoEippu4aHyc0EVs6CzbpFYoh4kDCIkVwpnz8PXwUVfiTYAI1C3b5AGNkcDysRoM204-K6aqzaRe4LMqZCQMMV1pSv88wcsx1uokhY8CTnAustrVuwQ4-R-YoYqQeKSVksuCGdGtsIpMp6s8Gi7ayAW5uQiP2S0KXr0QAYvdAbX0t9r_bgTFZfPqpPUEHxZdXDccDYU6MmMYfLlNiL69Lf5B9Fm5Fi13TZLCEVdQpFFqrSxJZmkcMQejgnl6tTDgxZ-mQMJMievQwJADE7omh2eRVPqY3NrrmsFKxqYnkgF807R76dM5R07GH8Ug-AJV)
+  
  Biểu đồ lớp thể hiện các mối quan hệ sau:
   * Employee có mối quan hệ một-một với PaymentInformation. Điều này có nghĩa là mỗi nhân viên chỉ có một phương thức thanh toán đang hoạt động.
   * PaymentInformation có mối quan hệ một-một với PaymentMethod. Điều này có nghĩa là mỗi bản ghi thông tin thanh toán được liên kết với một phương thức thanh toán cụ thể.
